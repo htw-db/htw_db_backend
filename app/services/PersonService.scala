@@ -1,7 +1,6 @@
 package services
 
 import com.google.inject.Inject
-import scala.concurrent.Future
 
 import models.Person
 import repositories.PersonRepository
@@ -9,7 +8,15 @@ import repositories.PersonRepository
 
 class PersonService @Inject()(personRepository: PersonRepository) {
 
-  def listPersons(): Future[Seq[Person]] = {
+  def listPersons(): Seq[Person] = {
     personRepository.list()
+  }
+
+  def addPerson(username: String): Person = {
+    personRepository.create(username)
+  }
+
+  def findPersonByUsername(username: String): Option[Person] = {
+    personRepository.findByUsername(username)
   }
 }
