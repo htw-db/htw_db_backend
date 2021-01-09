@@ -12,7 +12,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
     "com.typesafe.play" %% "play-slick" % "5.0.0",
     "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",
-    "org.postgresql" % "postgresql" % "42.2.14"
+    "org.postgresql" % "postgresql" % "42.2.14",
+    "org.apache.directory.api" % "api-all" % "1.0.0-RC2"
   ),
   libraryDependencies += evolutions
 )
