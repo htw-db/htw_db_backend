@@ -1,15 +1,14 @@
 package services
 
 import com.google.inject.Inject
-import pdi.jwt.{Jwt, JwtAlgorithm, JwtHeader, JwtJson}
+import pdi.jwt.{JwtAlgorithm, JwtJson}
+import play.api.Configuration
 import play.api.libs.json.JsObject
 
-import scala.util.Try
 
+class AuthService @Inject()(config: Configuration) {
 
-class AuthService @Inject()() {
-
-  val JwtSecretKey = "secretKey"
+  val JwtSecretKey: String = config.get[String]("jwt.secretKey")
   val JwtAlgorithmType: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256
 
   def createToken(claim: JsObject): String = {
