@@ -4,11 +4,16 @@
 # ~~~~
 
 # Home
-GET     /                           controllers.HomeController.index()
-GET     /login                      controllers.AccountController.authenticate()
+GET        /                    controllers.HomeController.index()
+
+# Account
+GET        /login               controllers.AccountController.authenticate()
 
 # Person
-GET     /persons                    controllers.PersonController.getAll()
+GET        /persons             controllers.PersonController.getAll()
+
+# Instances
+GET        /instances           controllers.InstanceController.getAll()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
