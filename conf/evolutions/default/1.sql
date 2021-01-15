@@ -1,10 +1,20 @@
 # --- !Ups
 
-create table "person" (
-  "id" BIGSERIAL PRIMARY KEY,
-  "username" varchar not null
+create table "person"
+(
+    "id"       BIGSERIAL PRIMARY KEY,
+    "username" VARCHAR NOT NULL UNIQUE
 );
 
 # --- !Downs
 
-drop table "person" if exists;
+# --- !Ups
+
+create table "instance"
+(
+    id        BIGSERIAL PRIMARY KEY,
+    name      VARCHAR   NOT NULL UNIQUE,
+    person_id BIGSERIAL not null references person (id)
+);
+
+# --- !Downs

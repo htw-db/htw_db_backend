@@ -1,7 +1,6 @@
 package services
 
 import java.io.IOException
-
 import com.google.inject.Inject
 import play.api.Configuration
 import org.apache.directory.ldap.client.api.LdapConnectionConfig
@@ -29,12 +28,12 @@ class LdapService @Inject()(config: Configuration) {
     } catch {
       case e: InvalidConnectionException =>
         return false
-        // e.printStackTrace()
-        // throw new Exception("ldap.noConnection")
+      // e.printStackTrace()
+      // throw new Exception("ldap.noConnection")
       case e: LdapException =>
         return false
-        // e.printStackTrace()
-        // throw new Exception("ldap.wrongCredentials")
+      // e.printStackTrace()
+      // throw new Exception("ldap.wrongCredentials")
     }
 
     try {
@@ -42,7 +41,7 @@ class LdapService @Inject()(config: Configuration) {
     } catch {
       case e: IOException =>
         return false
-        // e.printStackTrace()
+      // e.printStackTrace()
     }
 
     true

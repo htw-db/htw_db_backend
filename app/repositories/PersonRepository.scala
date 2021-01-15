@@ -2,12 +2,12 @@ package repositories
 
 import com.google.inject.Inject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-
 import scala.concurrent.{Await, ExecutionContext}
 import slick.jdbc.JdbcProfile
+import scala.concurrent.duration.Duration
+
 import models.{Person, PersonTable}
 
-import scala.concurrent.duration.Duration
 
 class PersonRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] {
