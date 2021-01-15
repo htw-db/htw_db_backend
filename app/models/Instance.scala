@@ -9,7 +9,7 @@ class InstanceTable(tag: Tag) extends Table[Instance](tag, "instance") {
 
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
-  def name = column[String]("name")
+  def name = column[String]("name", O.Unique)
 
   def personId = column[Long]("person_id")
 

@@ -3,7 +3,7 @@
 create table "person"
 (
     "id"       BIGSERIAL PRIMARY KEY,
-    "username" varchar not null
+    "username" VARCHAR NOT NULL UNIQUE
 );
 
 # --- !Downs
@@ -13,7 +13,7 @@ create table "person"
 create table "instance"
 (
     id        BIGSERIAL PRIMARY KEY,
-    name      varchar   not null,
+    name      VARCHAR   NOT NULL UNIQUE,
     person_id BIGSERIAL not null references person (id)
 );
 
