@@ -15,6 +15,10 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   val instances = TableQuery[InstanceTable]
 
+  /**
+   * List all instances
+   * @return all instances
+   */
   def list(): Seq[Instance] = {
     val result = db.run {
       instances.result
@@ -22,12 +26,35 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
     Await.result(result, Duration.Inf)
   }
 
+  /**
+   * Creates an instance
+   * @param name name of instance
+   * @param personId name of person
+   * @return instance if created else None
+   */
   def create(name: String, personId: Long): Option[Instance] = {
     val insertQuery = instances returning instances.map(_.id) into ((item, id) => item.copy(id = id))
-    val action = insertQuery += Instance(0, name, personId)
     try {
       val result = db.run {
-        action
+        insertQuery += Instance(0, name, personId)
+      }
+      Some(Await.result(result, Duration.Inf))
+    } catch {
+      case e: Exception =>
+        None
+    }
+  }
+
+  /**
+   * Deletes an instance
+   * @param id id of instance
+   * @param personId id of person
+   * @return number of deleted rows
+   */
+  def delete(id: Long, personId: Long): Option[Int] = {
+    try {
+      val result = db.run {
+        instances.filter(_.id === id).filter(_.personId === personId).delete
       }
       Some(Await.result(result, Duration.Inf))
     } catch {

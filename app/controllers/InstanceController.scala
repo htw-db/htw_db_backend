@@ -32,4 +32,13 @@ class InstanceController @Inject()(cc: ControllerComponents, instanceService: In
         }
       })
   }
+
+  def delete(id: Long): Action[AnyContent] = authAction { implicit request: UserRequest[AnyContent] =>
+    val result = instanceService.deleteInstance(id, request.person)
+    if(result.getOrElse(0) != 0) {
+      Ok(Json.toJson(result))
+    } else {
+      BadRequest("")
+    }
+  }
 }

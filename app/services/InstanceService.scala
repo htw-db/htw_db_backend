@@ -14,4 +14,7 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
     val name = person.username + "_" + instanceFormData.name
     instanceRepository.create(name, person.id)
   }
+  def deleteInstance(id: Long, person: Person): Option[Int] = {
+    instanceRepository.delete(id, person.id)
+  }
 }
