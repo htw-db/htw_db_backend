@@ -5,13 +5,15 @@ import javax.inject.Inject
 import play.api.http.HeaderNames
 import play.api.mvc._
 
-import services.AuthService
+import models.Person
+import services.{AuthService, PersonService}
 
-case class UserRequest[A](username: String, request: Request[A]) extends WrappedRequest[A](request)
+case class UserRequest[A](person: Person, request: Request[A]) extends WrappedRequest[A](request)
 
-class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthService)(implicit ec: ExecutionContext) extends ActionBuilder[UserRequest, AnyContent] {
+class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthService, personService: PersonService)(implicit ec: ExecutionContext) extends ActionBuilder[UserRequest, AnyContent] {
 
   override def parser: BodyParser[AnyContent] = bodyParser
+
   override protected def executionContext: ExecutionContext = ec
 
   private val headerTokenRegex = """Bearer (.+?)""".r
@@ -21,9 +23,16 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
     val isValidToken = authService.isValidToken(jwtToken)
     if (isValidToken) {
       val claim = authService.decodeClaim(jwtToken)
-      val username = claim.getOrElse("username", "").toString
-      if (username != "") {
-        block(UserRequest(username, request))
+      if (claim.isDefined) {
+        val claimMap = claim.get.value
+        val username = claimMap.getOrElse("username", "").toString.replace("\"", "")
+        val person = personService.findPersonByUsername(username)
+        if (person.isDefined) {
+          print(person.get)
+          block(UserRequest(person.get, request))
+        } else {
+          Future.successful(Results.Unauthorized)
+        }
       } else {
         Future.successful(Results.Unauthorized)
       }
