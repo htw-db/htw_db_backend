@@ -28,7 +28,6 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
         val username = claimMap.getOrElse("username", "").toString.replace("\"", "")
         val person = personService.findPersonByUsername(username)
         if (person.isDefined) {
-          print(person.get)
           block(UserRequest(person.get, request))
         } else {
           Future.successful(Results.Unauthorized)
