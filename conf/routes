@@ -13,7 +13,7 @@ GET           /login                controllers.AccountController.authenticate()
 GET           /persons              controllers.PersonController.getAll()
 
 # Instances
-GET           /instances            controllers.InstanceController.getAll()
+GET           /instances            controllers.InstanceController.filterByPerson()
 POST          /instances            controllers.InstanceController.create()
 DELETE        /instances/:id        controllers.InstanceController.delete(id: Long)
 

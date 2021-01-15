@@ -17,6 +17,7 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   /**
    * List all instances
+   *
    * @return all instances
    */
   def list(): Seq[Instance] = {
@@ -27,8 +28,26 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
   }
 
   /**
+   * List instances with the same personId
+   * @param personId id of person
+   * @return list of filtered instances
+   */
+  def filterByPerson(personId: Long): Seq[Instance] = {
+    try {
+      val result = db.run {
+        instances.filter(_.personId === personId).result
+      }
+      Await.result(result, Duration.Inf)
+    } catch {
+      case e: Exception =>
+        Seq()
+    }
+  }
+
+  /**
    * Creates an instance
-   * @param name name of instance
+   *
+   * @param name     name of instance
    * @param personId name of person
    * @return instance if created else None
    */
@@ -47,7 +66,8 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   /**
    * Deletes an instance
-   * @param id id of instance
+   *
+   * @param id       id of instance
    * @param personId id of person
    * @return number of deleted rows
    */

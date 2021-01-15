@@ -17,6 +17,11 @@ class InstanceController @Inject()(cc: ControllerComponents, instanceService: In
     Ok(Json.toJson(instances))
   }
 
+  def filterByPerson: Action[AnyContent] = authAction { implicit request: UserRequest[AnyContent] =>
+    val instances = instanceService.filterInstancesByPerson(request.person)
+    Ok(Json.toJson(instances))
+  }
+
   def create: Action[AnyContent] = authAction { implicit request: UserRequest[AnyContent] =>
     InstanceForm.form.bindFromRequest.fold(
       errorForm => {
