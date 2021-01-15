@@ -22,12 +22,17 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
     Await.result(result, Duration.Inf)
   }
 
-  def create(name: String, personId: Int): Instance = {
+  def create(name: String, personId: Long): Option[Instance] = {
     val insertQuery = instances returning instances.map(_.id) into ((item, id) => item.copy(id = id))
     val action = insertQuery += Instance(0, name, personId)
-    val result = db.run {
-      action
+    try {
+      val result = db.run {
+        action
+      }
+      Some(Await.result(result, Duration.Inf))
+    } catch {
+      case e: Exception =>
+        None
     }
-    Await.result(result, Duration.Inf)
   }
 }
