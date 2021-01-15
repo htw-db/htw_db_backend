@@ -2,9 +2,10 @@ package controllers
 
 import actions.{AuthAction, UserRequest}
 import javax.inject._
-import models.Person
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
+
+import models.Person
 import services.PersonService
 
 class PersonController @Inject()(cc: ControllerComponents, personService: PersonService, authAction: AuthAction) extends AbstractController(cc) {

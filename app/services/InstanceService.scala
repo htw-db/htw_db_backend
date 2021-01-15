@@ -1,6 +1,7 @@
 package services
 
 import com.google.inject.Inject
+
 import forms.InstanceFormData
 import models.{Instance, Person}
 import repositories.InstanceRepository
@@ -9,6 +10,7 @@ import repositories.InstanceRepository
 class InstanceService @Inject()(instanceRepository: InstanceRepository) {
   /**
    * List all instances using a repository
+   *
    * @return instances
    */
   def listInstances(): Seq[Instance] = {
@@ -17,6 +19,7 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
 
   /**
    * Filter all instances by person using a repository
+   *
    * @param person person object to filer
    * @return filtered instances
    */
@@ -26,8 +29,9 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
 
   /**
    * Create an instance using a repository
+   *
    * @param instanceFormData instance data
-   * @param person person data
+   * @param person           person data
    * @return instance if created
    */
   def addInstance(instanceFormData: InstanceFormData, person: Person): Option[Instance] = {
@@ -37,7 +41,8 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
 
   /**
    * Delete an instance using a repository
-   * @param id id of instance
+   *
+   * @param id     id of instance
    * @param person id of person
    * @return number of deleted rows
    */

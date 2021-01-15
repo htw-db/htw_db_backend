@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import models.{CredentialsForm, CredentialsFormData, Person}
+import models.{CredentialsForm, Person}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
 import services.{AuthService, LdapService, PersonService}
