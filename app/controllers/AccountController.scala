@@ -4,9 +4,10 @@ import javax.inject._
 import models.{CredentialsForm, Person}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
-import services.{AuthService, LdapService, PersonService}
 
-class AccountController @Inject()(cc: ControllerComponents, ldapService: LdapService, authService: AuthService, personService: PersonService) extends AbstractController(cc) {
+import services.{AuthService, LdapService, PersonService, PostgresService}
+
+class AccountController @Inject()(cc: ControllerComponents, ldapService: LdapService, authService: AuthService, personService: PersonService, postgresService: PostgresService) extends AbstractController(cc) {
 
   implicit val personFormat: OFormat[Person] = Json.format[Person]
 
@@ -21,7 +22,8 @@ class AccountController @Inject()(cc: ControllerComponents, ldapService: LdapSer
         if (isLdapAuthenticated) {
           val person = personService.findPersonByUsername(credentials.username)
           if (person.isEmpty) {
-            personService.addPerson(credentials.username)
+            val addedPerson = personService.addPerson(credentials.username)
+            postgresService.createRoleInGroup(addedPerson.username)
           }
           val claim = Json.obj(("username", credentials.username))
           val token = authService.createToken(claim)
