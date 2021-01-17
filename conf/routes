@@ -7,7 +7,7 @@
 GET           /                     controllers.HomeController.index()
 
 # Account
-GET           /login                controllers.AccountController.authenticate()
+POST           /login                controllers.AccountController.authenticate()
 
 # Person
 GET           /persons              controllers.PersonController.getAll()
