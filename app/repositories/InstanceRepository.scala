@@ -28,6 +28,23 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
   }
 
   /**
+   * Gets a instance by id
+   * @param databaseId id of instance
+   * @return instance if exists
+   */
+  def get(databaseId: Long): Option[Instance] = {
+    try {
+      val result = db.run {
+        instances.filter(_.id === databaseId).result.headOption
+      }
+      Await.result(result, Duration.Inf)
+    } catch {
+      case e: Exception =>
+        None
+    }
+  }
+
+  /**
    * List instances with the same personId
    * @param personId id of person
    * @return list of filtered instances

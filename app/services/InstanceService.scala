@@ -7,7 +7,7 @@ import models.{Instance, Person}
 import repositories.InstanceRepository
 
 
-class InstanceService @Inject()(instanceRepository: InstanceRepository) {
+class InstanceService @Inject()(instanceRepository: InstanceRepository, postgresService: PostgresService) {
   /**
    * List all instances using a repository
    *
@@ -15,6 +15,16 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
    */
   def listInstances(): Seq[Instance] = {
     instanceRepository.list()
+  }
+
+  /**
+   * Get instance by id using a repository
+   *
+   * @param id of instance
+   * @return instance if exists
+   */
+  def getInstance(id: Long): Option[Instance] = {
+    instanceRepository.get(id)
   }
 
   /**
@@ -28,15 +38,19 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
   }
 
   /**
-   * Create an instance using a repository
+   * Creates an instance using a repository
    *
    * @param instanceFormData instance data
    * @param person           person data
    * @return instance if created
    */
   def addInstance(instanceFormData: InstanceFormData, person: Person): Option[Instance] = {
-    val name = person.username + "_" + instanceFormData.name
-    instanceRepository.create(name, person.id)
+    val databaseName = person.username + "_" + instanceFormData.name
+    val result = instanceRepository.create(databaseName, person.id)
+    if (result.isDefined) {
+      postgresService.createDatabaseWithOwner(databaseName, person.username)
+    }
+    result
   }
 
   /**
@@ -47,6 +61,16 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository) {
    * @return number of deleted rows
    */
   def deleteInstance(id: Long, person: Person): Option[Int] = {
-    instanceRepository.delete(id, person.id)
+    val instance = getInstance(id)
+    if (instance.isDefined) {
+      val result = postgresService.deleteDatabase(instance.get.name)
+      if (result) {
+        instanceRepository.delete(id, person.id)
+      } else {
+        None
+      }
+    } else {
+      None
+    }
   }
 }
