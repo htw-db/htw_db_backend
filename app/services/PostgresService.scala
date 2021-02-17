@@ -56,7 +56,7 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
    * @return
    */
   def createDatabaseWithOwner(databaseName: String, roleName: String): Boolean = {
-    val statement = sql"""CREATE DATABASE #${databaseName} WITH OWNER #${roleName} ENCODING 'UTF8'"""
+    val statement = sql"""CREATE DATABASE #${databaseName} WITH OWNER #${roleName} ENCODING 'UTF8' TEMPLATE template1"""
     try {
       val query = db.run(statement.as[(Int)])
       Await.result(query, Duration.Inf)
