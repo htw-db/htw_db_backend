@@ -3,10 +3,9 @@ package services
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.jdbc.JdbcProfile
+import slick.jdbc.{JdbcProfile, SQLActionBuilder}
+
 import scala.concurrent.{Await, ExecutionContext}
-
-
 import scala.concurrent.duration.Duration
 
 class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, config: Configuration)(implicit executionContext: ExecutionContext)
@@ -14,18 +13,17 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import profile.api._
 
-  val groupName = config.get[String]("postgres.groupName")
+  val groupName: String = config.get[String]("postgres.groupName")
 
   /**
-   * Create a role in a group.
-   * @param roleName  name of role
-   * @return true if role was created
+   * Runs statement as query
+   * @param statement which will turn in to a query
+   * @return true if success
    */
-  def createRoleInGroup(roleName: String): Boolean = {
-    val statement = sql"""CREATE ROLE #${roleName} WITH NOSUPERUSER LOGIN CONNECTION LIMIT 10 IN ROLE #${groupName}"""
+  def run_statement(statement: SQLActionBuilder): Boolean = {
     try {
-      val result = db.run(statement.as[(Int)])
-      Await.result(result, Duration.Inf)
+      val query = db.run(statement.as[Int])
+      Await.result(query, Duration.Inf)
       true
     } catch {
       case e: Exception =>
@@ -34,19 +32,22 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
   /**
+   * Create a role in a group.
+   * @param roleName  name of role
+   * @return true if role was created
+   */
+  def createRoleInGroup(roleName: String): Boolean = {
+    val statement = sql"""CREATE ROLE #${roleName} WITH NOSUPERUSER LOGIN CONNECTION LIMIT 10 IN ROLE #${groupName}"""
+    run_statement(statement)
+  }
+
+  /**
    * Creates a group for roles
    * @return true if group was created
    */
   def createGroup(): Boolean = {
     val statement = sql"""CREATE ROLE #${groupName} WITH NOSUPERUSER"""
-    try {
-      val result = db.run(statement.as[(Int)])
-      Await.result(result, Duration.Inf)
-      true
-    } catch {
-      case e: Exception =>
-        false
-    }
+    run_statement(statement)
   }
 
   /**
@@ -57,14 +58,7 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
    */
   def createDatabaseWithOwner(databaseName: String, roleName: String): Boolean = {
     val statement = sql"""CREATE DATABASE #${databaseName} WITH OWNER #${roleName}"""
-    try {
-      val query = db.run(statement.as[(Int)])
-      Await.result(query, Duration.Inf)
-      true
-    } catch {
-      case e: Exception =>
-        false
-    }
+    run_statement(statement)
   }
 
   /**
@@ -74,13 +68,7 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
    */
   def deleteDatabase(databaseName: String): Boolean = {
     val statement = sql"""DROP DATABASE IF EXISTS #$databaseName"""
-    try {
-      val query = db.run(statement.as[(Int)])
-      Await.result(query, Duration.Inf)
-      true
-    } catch {
-      case e: Exception =>
-        false
-    }
+    run_statement(statement)
   }
+
 }
