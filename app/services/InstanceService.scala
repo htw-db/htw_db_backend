@@ -8,6 +8,19 @@ import repositories.InstanceRepository
 
 
 class InstanceService @Inject()(instanceRepository: InstanceRepository, postgresService: PostgresService) {
+
+  private def onlyLegalChars(text: String): Boolean = {
+    text.forall(_.isLetterOrDigit)
+  }
+
+  private def hasLegalLength(text: String): Boolean = {
+    text.length >= 4 && text.length <= 20
+  }
+
+  private def onlyLowerCase(text: String): Boolean = {
+    text.forall(_.isLower)
+  }
+
   /**
    * List all instances using a repository
    *
@@ -45,12 +58,16 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository, postgres
    * @return instance if created
    */
   def addInstance(instanceFormData: InstanceFormData, person: Person): Option[Instance] = {
-    val databaseName = person.username + "_" + instanceFormData.name
-    val result = instanceRepository.create(databaseName, person.id)
-    if (result.isDefined) {
-      postgresService.createDatabaseWithOwner(databaseName, person.username)
+    if (onlyLegalChars(instanceFormData.name) && hasLegalLength(instanceFormData.name) && onlyLowerCase(instanceFormData.name)) {
+      val databaseName = person.username + "_" + instanceFormData.name
+      val result = instanceRepository.create(databaseName, person.id)
+      if (result.isDefined) {
+        postgresService.createDatabaseWithOwner(databaseName, person.username)
+      }
+      result
+    } else {
+      None
     }
-    result
   }
 
   /**
