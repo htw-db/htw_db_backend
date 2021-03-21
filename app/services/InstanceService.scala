@@ -62,7 +62,7 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository, postgres
    */
   def deleteInstance(id: Long, person: Person): Option[Int] = {
     val instance = getInstance(id)
-    if (instance.isDefined) {
+    if (instance.isDefined && instance.get.personId == person.id) {
       val result = postgresService.deleteDatabase(instance.get.name)
       if (result) {
         instanceRepository.delete(id, person.id)
