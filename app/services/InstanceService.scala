@@ -17,8 +17,9 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository, postgres
     text.length >= 4 && text.length <= 20
   }
 
-  private def onlyLowerCase(text: String): Boolean = {
-    text.forall(_.isLower)
+  private def onlyLowerCase(actual: String): Boolean = {
+    val expected = actual.toLowerCase()
+    actual == expected
   }
 
   /**
