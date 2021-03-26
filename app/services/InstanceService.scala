@@ -3,11 +3,14 @@ package services
 import com.google.inject.Inject
 import forms.InstanceFormData
 import models.{Instance, Person}
+import play.api.Logger
 import repositories.InstanceRepository
 import utils.Validators
 
 
 class InstanceService @Inject()(instanceRepository: InstanceRepository, postgresService: PostgresService) {
+
+  val logger: Logger = Logger(this.getClass)
 
   /**
    * List all instances using a repository
@@ -56,6 +59,7 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository, postgres
       }
       result
     } else {
+      logger.warn(instanceFormData.toString + " - " + person.username + " invalid db name")
       None
     }
   }

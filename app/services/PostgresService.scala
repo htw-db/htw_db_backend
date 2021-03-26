@@ -1,7 +1,7 @@
 package services
 
 import com.google.inject.Inject
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.{JdbcProfile, SQLActionBuilder}
 
@@ -13,6 +13,7 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import profile.api._
 
+  val logger: Logger = Logger(this.getClass)
   val groupName: String = config.get[String]("postgres.groupName")
 
   /**
@@ -27,6 +28,7 @@ class PostgresService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
       true
     } catch {
       case e: Exception =>
+        logger.error(e.toString)
         false
     }
   }

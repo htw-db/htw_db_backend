@@ -10,7 +10,7 @@ GET           /                     controllers.HomeController.index()
 POST           /login                controllers.AccountController.authenticate()
 
 # Person
-GET           /persons              controllers.PersonController.getAll()
+# GET           /persons              controllers.PersonController.getAll()
 
 # Instances
 GET           /instances            controllers.InstanceController.filterByPerson()

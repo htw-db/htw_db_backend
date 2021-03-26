@@ -1,8 +1,9 @@
 package services
 
 import java.io.IOException
+
 import com.google.inject.Inject
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import org.apache.directory.ldap.client.api.LdapConnectionConfig
 import org.apache.directory.ldap.client.api.LdapNetworkConnection
 import org.apache.directory.ldap.client.api.exception.InvalidConnectionException
@@ -10,6 +11,8 @@ import org.apache.directory.api.ldap.model.exception.LdapException
 
 
 class LdapService @Inject()(config: Configuration) {
+
+  val logger: Logger = Logger(this.getClass)
 
   /**
    * Verifies credentials with ldap service
@@ -27,10 +30,12 @@ class LdapService @Inject()(config: Configuration) {
       ldapConnection.bind()
     } catch {
       case e: InvalidConnectionException =>
+        logger.warn(username + " - ldap.noConnection")
         return false
       // e.printStackTrace()
       // throw new Exception("ldap.noConnection")
       case e: LdapException =>
+        logger.warn(username + " - ldap.wrongCredentials")
         return false
       // e.printStackTrace()
       // throw new Exception("ldap.wrongCredentials")

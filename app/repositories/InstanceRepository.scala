@@ -2,6 +2,7 @@ package repositories
 
 import com.google.inject.Inject
 import models.{Instance, InstanceTable}
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -12,6 +13,8 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
   extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
+
+  val logger: Logger = Logger(this.getClass)
 
   val instances = TableQuery[InstanceTable]
 
@@ -40,6 +43,7 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
       Await.result(result, Duration.Inf)
     } catch {
       case e: Exception =>
+        logger.warn(e.toString)
         None
     }
   }
@@ -57,6 +61,7 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
       Await.result(result, Duration.Inf)
     } catch {
       case e: Exception =>
+        logger.warn(e.toString)
         Seq()
     }
   }
@@ -77,6 +82,7 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
       Some(Await.result(result, Duration.Inf))
     } catch {
       case e: Exception =>
+        logger.warn(e.toString)
         None
     }
   }
@@ -96,6 +102,7 @@ class InstanceRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
       Some(Await.result(result, Duration.Inf))
     } catch {
       case e: Exception =>
+        logger.warn(e.toString)
         None
     }
   }

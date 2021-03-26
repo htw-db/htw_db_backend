@@ -4,8 +4,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
 import play.api.http.HeaderNames
 import play.api.mvc._
-
 import models.Person
+import play.api.Logger
 import services.{AuthService, PersonService}
 
 case class UserRequest[A](person: Person, request: Request[A]) extends WrappedRequest[A](request)
@@ -15,6 +15,8 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
   override def parser: BodyParser[AnyContent] = bodyParser
 
   override protected def executionContext: ExecutionContext = ec
+
+  val logger: Logger = Logger(this.getClass)
 
   private val headerTokenRegex = """Bearer (.+?)""".r
 
@@ -30,12 +32,15 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
         if (person.isDefined) {
           block(UserRequest(person.get, request))
         } else {
+          logger.warn(request.remoteAddress + " - " + request + " - invalid token person")
           Future.successful(Results.Unauthorized)
         }
       } else {
+        logger.warn(request.remoteAddress + " - " + request + " - invalid token payload")
         Future.successful(Results.Unauthorized)
       }
     } else {
+      logger.warn(request.remoteAddress + " - " + request + " - invalid token")
       Future.successful(Results.Unauthorized)
     }
   }
