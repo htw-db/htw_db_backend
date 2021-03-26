@@ -1,26 +1,13 @@
 package services
 
 import com.google.inject.Inject
-
 import forms.InstanceFormData
 import models.{Instance, Person}
 import repositories.InstanceRepository
+import utils.Validators
 
 
 class InstanceService @Inject()(instanceRepository: InstanceRepository, postgresService: PostgresService) {
-
-  private def onlyLegalChars(text: String): Boolean = {
-    text.forall(_.isLetterOrDigit)
-  }
-
-  private def hasLegalLength(text: String): Boolean = {
-    text.length >= 4 && text.length <= 20
-  }
-
-  private def onlyLowerCase(actual: String): Boolean = {
-    val expected = actual.toLowerCase()
-    actual == expected
-  }
 
   /**
    * List all instances using a repository
@@ -59,8 +46,10 @@ class InstanceService @Inject()(instanceRepository: InstanceRepository, postgres
    * @return instance if created
    */
   def addInstance(instanceFormData: InstanceFormData, person: Person): Option[Instance] = {
-    if (onlyLegalChars(instanceFormData.name) && hasLegalLength(instanceFormData.name) && onlyLowerCase(instanceFormData.name)) {
-      val databaseName = person.username + "_" + instanceFormData.name
+    val databaseSuffix = instanceFormData.name
+    val databasePrefix = person.username + "_"
+    if (Validators.validateName(databaseSuffix)) {
+      val databaseName = databasePrefix + databaseSuffix
       val result = instanceRepository.create(databaseName, person.id)
       if (result.isDefined) {
         postgresService.createDatabaseWithOwner(databaseName, person.username)
