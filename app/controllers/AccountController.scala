@@ -1,7 +1,8 @@
 package controllers
 
+import forms.CredentialsForm
 import javax.inject._
-import models.{CredentialsForm, Person}
+import models.Person
 import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
