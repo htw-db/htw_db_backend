@@ -24,9 +24,9 @@
     </appender>
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashAccessUdpSocketAppender">
-        <host>${elk.host}</host>
+        <host>141.45.146.175</host>
         <!-- port is optional (default value shown) -->
-        <port>${elk.port}</port>
+        <port>5144</port>
 
         <!-- layout is required -->
         <layout class="net.logstash.logback.layout.LogstashLayout">
