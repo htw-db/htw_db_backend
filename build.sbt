@@ -15,8 +15,11 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
     "org.postgresql" % "postgresql" % "42.2.14",
     "org.apache.directory.api" % "api-all" % "1.0.0-RC2",
     "com.pauldijou" %% "jwt-play-json" % "4.3.0",
-    "com.pauldijou" %% "jwt-core" % "4.3.0"
-  ),
+    "com.pauldijou" %% "jwt-core" % "4.3.0",
+    "net.logstash.logback" % "logstash-logback-encoder" % "6.6",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.2",
+
+),
   libraryDependencies += evolutions
 )
 
